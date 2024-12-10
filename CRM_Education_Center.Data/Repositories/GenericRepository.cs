@@ -1,4 +1,5 @@
-﻿using CRM_Education_Center.Data.Interfaces;
+﻿using CRM_Education_Center.Data.DbContexts;
+using CRM_Education_Center.Data.Interfaces;
 using CRM_Education_Center.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,28 +8,30 @@ namespace CRM_Education_Center.Data.Repositories;
 public class GenericRepository<T>(AppDbContext dbContext)
     : IGenericRepository<T> where T : BaseEntity
 {
-    public Task CreateAsync(T entity)
+    protected readonly AppDbContext _dbContext = dbContext;
+    private readonly DbSet<T> _dbSet = dbContext.Set<T>();
+
+    public async Task CreateAsync(T entity)
     {
-        throw new NotImplementedException();
+        await _dbSet.AddAsync(entity);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task DeleteAsync(T entity)
+    public async Task DeleteAsync(T entity)
     {
-        throw new NotImplementedException();
+        _dbSet.Remove(entity);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task<List<T>> GetAllAsync()
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<List<T>> GetAllAsync()
+        => await _dbSet.ToListAsync();
 
-    public Task<T?> GetByIdAsync(int id)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<T?> GetByIdAsync(int id)
+        => await _dbSet.FirstOrDefaultAsync(x => x.Id == id);
 
-    public Task UpdateAsync(T entity)
+    public async Task UpdateAsync(T entity)
     {
-        throw new NotImplementedException();
+        _dbSet.Update(entity);
+        await _dbContext.SaveChangesAsync();
     }
 }

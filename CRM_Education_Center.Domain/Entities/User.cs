@@ -10,5 +10,6 @@ namespace CRM_Education_Center.Domain.Entities
         public List<Payment> Payments { get; set; } = new List<Payment>(); // Payment history
         public int GroupId { get; set; } // Group the user belongs to
         public Group Group { get; set; } = new Group(); // Navigation property
+        public bool IsActive { get; set; }
     }
 }
